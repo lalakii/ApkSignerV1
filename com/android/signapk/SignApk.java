@@ -90,11 +90,8 @@ public class SignApk {
 								}
 
 							}, var1));
-			byte[] pkcs7data = generator.generate(new CMSProcessableByteArray(new byte[0]), true).getEncoded();
-			var2.write(pkcs7data);
-		} catch (OperatorCreationException e) {
-			e.printStackTrace();
-		} catch (CMSException e) {
+			var2.write(generator.generate(new CMSProcessableByteArray(new byte[0]), true).getEncoded());
+		} catch (OperatorCreationException | CMSException e) {
 			e.printStackTrace();
 		}
 	}

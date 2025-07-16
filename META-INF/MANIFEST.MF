@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Created-By: 1.6.0_31 (Sun Microsystems Inc.)
+Created-By: 24.0.1
 Main-Class: com.android.signapk.SignApk
 
