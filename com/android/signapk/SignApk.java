@@ -1,12 +1,12 @@
 package com.android.signapk;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,11 +56,11 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-public class SignApk {
 
+public class SignApk {
 	/**
 	 * @author lalaki
-	 * */
+	 */
 	private static void writeSignatureBlock(Signature var0, X509Certificate var1, OutputStream var2)
 			throws IOException, GeneralSecurityException {
 		List<java.security.cert.Certificate> certList = new ArrayList<java.security.cert.Certificate>();
@@ -188,7 +188,7 @@ public class SignApk {
 		Encoder encoder = Base64.getEncoder();
 		MessageDigest var5 = MessageDigest.getInstance("SHA1");
 		byte[] var6 = new byte[4096];
-		TreeMap<String,JarEntry> var8 = new TreeMap<String, JarEntry>();
+		TreeMap<String, JarEntry> var8 = new TreeMap<String, JarEntry>();
 		Enumeration<JarEntry> var9 = var0.entries();
 
 		JarEntry var10;
@@ -267,7 +267,6 @@ public class SignApk {
 			var12.putValue("SHA1-Digest", var4.encodeToString(var5.digest()));
 			var2.getEntries().put(var9.getKey().toString(), var12);
 		}
-
 		var2.write(var1);
 		if (var1.size() % 1024 == 0) {
 			var1.write(13);
@@ -424,7 +423,7 @@ public class SignApk {
 
 	}
 
-	private static class SignatureOutputStream extends FilterOutputStream {
+	private static class SignatureOutputStream extends BufferedOutputStream {
 		private Signature mSignature;
 		private int mCount;
 
