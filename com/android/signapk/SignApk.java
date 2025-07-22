@@ -25,13 +25,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Base64.Encoder;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.jar.Attributes;
@@ -56,6 +52,7 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.encoders.Base64;
 
 public class SignApk {
 	/**
@@ -63,7 +60,7 @@ public class SignApk {
 	 */
 	private static void writeSignatureBlock(Signature var0, X509Certificate var1, OutputStream var2)
 			throws IOException, GeneralSecurityException {
-		List<java.security.cert.Certificate> certList = new ArrayList<java.security.cert.Certificate>();
+		ArrayList<java.security.cert.Certificate> certList = new ArrayList<java.security.cert.Certificate>();
 		certList.add(var1);
 		final byte[] data = var0.sign();
 		CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
@@ -181,8 +178,6 @@ public class SignApk {
 			var3.putValue("Manifest-Version", "1.0");
 			var3.putValue("Created-By", "1.0 (Android SignApk)");
 		}
-
-		Encoder encoder = Base64.getEncoder();
 		MessageDigest var5 = MessageDigest.getInstance("SHA1");
 		byte[] var6 = new byte[4096];
 		TreeMap<String, JarEntry> var8 = new TreeMap<String, JarEntry>();
@@ -228,7 +223,7 @@ public class SignApk {
 			}
 
 			var13 = var13 != null ? new Attributes(var13) : new Attributes();
-			var13.putValue("SHA1-Digest", encoder.encodeToString(var5.digest()));
+			var13.putValue("SHA1-Digest", Base64.toBase64String(var5.digest()));
 			var2.getEntries().put(var11, var13);
 		}
 	}
@@ -239,14 +234,13 @@ public class SignApk {
 		Attributes var3 = var2.getMainAttributes();
 		var3.putValue("Signature-Version", "1.0");
 		var3.putValue("Created-By", "1.0 (Android SignApk)");
-		Encoder var4 = Base64.getEncoder();
 		MessageDigest var5 = MessageDigest.getInstance("SHA1");
 		PrintStream var6 = new PrintStream(new DigestOutputStream(new ByteArrayOutputStream(), var5), true, "UTF-8");
 		var0.write(var6);
 		var6.flush();
-		var3.putValue("SHA1-Digest-Manifest", var4.encodeToString(var5.digest()));
-		Map<String, Attributes> var7 = var0.getEntries();
-		Iterator<Entry<String, Attributes>> var8 = var7.entrySet().iterator();
+		var3.putValue("SHA1-Digest-Manifest", Base64.toBase64String(var5.digest()));
+
+		Iterator<Entry<String, Attributes>> var8 = var0.getEntries().entrySet().iterator();
 
 		while (var8.hasNext()) {
 			Entry<String, Attributes> var9 = (Entry<String, Attributes>) var8.next();
@@ -261,7 +255,7 @@ public class SignApk {
 			var6.print("\r\n");
 			var6.flush();
 			Attributes var12 = new Attributes();
-			var12.putValue("SHA1-Digest", var4.encodeToString(var5.digest()));
+			var12.putValue("SHA1-Digest", Base64.toBase64String(var5.digest()));
 			var2.getEntries().put(var9.getKey().toString(), var12);
 		}
 		var2.write(var1);
@@ -316,9 +310,8 @@ public class SignApk {
 
 	private static void copyFiles(Manifest var0, JarFile var1, JarOutputStream var2, long var3) throws IOException {
 		byte[] var5 = new byte[4096];
-		Map<String, Attributes> var7 = var0.getEntries();
-		ArrayList<String> var8 = new ArrayList<String>(var7.keySet());
-		Collections.sort(var8);
+		ArrayList<String> var8 = new ArrayList<String>(var0.getEntries().keySet());
+		var8.sort(Comparator.naturalOrder());
 		Iterator<String> var9 = var8.iterator();
 
 		while (var9.hasNext()) {
