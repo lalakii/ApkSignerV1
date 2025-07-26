@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="libs/bcpkix-jdk14-1.81.jar"/>
 	<classpathentry kind="lib" path="libs/bcprov-jdk18on-1.81.jar"/>
 	<classpathentry kind="lib" path="libs/bcutil-jdk14-1.81.jar"/>
+	<classpathentry kind="lib" path="libs/guava-33.4.8-jre.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
